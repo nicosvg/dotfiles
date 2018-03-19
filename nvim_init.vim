@@ -2,6 +2,7 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'elixir-editors/vim-elixir'
 Plug 'crusoexia/vim-monokai'
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 
 call plug#end()
 
