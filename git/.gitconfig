@@ -1,0 +1,31 @@
+[user]
+name = Nicolas Sauvage
+email = nicolas.sauvage@talanlabs.com
+[alias]
+co = checkout
+br = branch
+ci = commit
+st = status
+cim = commit -m
+aa = add .
+svnr = svn rebase
+svnd = svn dcommit -e
+mff = merge --ff-only
+p = pull
+cwip = commit -am "WIP"
+rc = rebase --continue
+amend = commit -a --amend --no-edit
+clean-branches = "!git branch --merged | xargs git br -d"
+branch-name = "!git rev-parse --abbrev-ref HEAD"
+publish = "!git push -u origin $(git branch-name)"
+# https://robots.thoughtbot.com/git-push-force-with-lease
+pf = push --force-with-lease
+[rerere]
+enabled = true
+[https]
+[http]
+[push]
+default = simple
+[rebase]
+autosquash = true
+
