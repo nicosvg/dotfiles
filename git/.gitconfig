@@ -1,6 +1,6 @@
 [user]
 name = Nicolas Sauvage
-email = nicolas.sauvage@talanlabs.com
+email = nicolas.sauvage@talan.com
 [alias]
 co = checkout
 br = branch
@@ -12,7 +12,7 @@ svnr = svn rebase
 svnd = svn dcommit -e
 mff = merge --ff-only
 p = pull
-cwip = commit -am "WIP"
+cwip = commit -am "WIP" --no-verify
 rc = rebase --continue
 amend = commit -a --amend --no-edit
 clean-branches = "!git branch --merged | xargs git br -d"
@@ -28,4 +28,9 @@ enabled = true
 default = simple
 [rebase]
 autosquash = true
-
+[core]
+	autocrlf = input
+	editor = vim
+[credential]
+	helper = cache --timeout=36000
+#	helper = cache --timeout=0
