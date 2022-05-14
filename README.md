@@ -8,5 +8,5 @@ Example: create symlinks to tmux conf
 
 ```bash
 cd ~/dotfiles
-stow tmux
+stow -t ~/ tmux
 ```
