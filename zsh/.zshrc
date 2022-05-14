@@ -110,3 +110,8 @@ alias casque="pacmd set-default-source bluez_source.70_BF_92_65_69_67.headset_he
 
 export PATH=$PATH:~/apps
 export PATH=$PATH:~/apps/flutter/bin
+
+
+# Neovim
+alias vim='nvim'
+export EDITOR='nvim'
