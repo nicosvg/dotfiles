@@ -10,3 +10,7 @@ Example: create symlinks to tmux conf
 cd ~/dotfiles
 stow -t ~/ tmux
 ```
+
+## Refresh font cache
+
+`fc-cache -f -v`

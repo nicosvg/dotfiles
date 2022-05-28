@@ -1,0 +1,8 @@
+# Ignore files from oh-my-tmux
+^\.git
+^\.github
+^\.gitattributes
+
+^/README.*
+^/LICENSE.*
+^/COPYING
