@@ -9,6 +9,14 @@ return require('packer').startup(function(use)
         }
     }
 
+-- Comment
+use {
+    'numToStr/Comment.nvim',
+    config = function()
+        require('Comment').setup()
+    end
+}
+
     -- Leap
     use 'ggandor/leap.nvim'
 
@@ -48,6 +56,9 @@ return require('packer').startup(function(use)
     -- Vim Airline (status bar)
     use 'vim-airline/vim-airline'
 
+    -- Tmux navigator
+    use 'christoomey/vim-tmux-navigator'
+
     -- Autotag
     use 'windwp/nvim-ts-autotag'
 
@@ -61,4 +72,10 @@ return require('packer').startup(function(use)
 		 }
 	end,
     })
+
+    -- Mason (packages manager)
+    use { "williamboman/mason.nvim" }
+       use { "williamboman/mason-lspconfig.nvim"}
+    use {"neovim/nvim-lspconfig"}
+
 end)

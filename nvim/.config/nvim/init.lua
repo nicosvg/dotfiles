@@ -1,6 +1,7 @@
 require('plugins')
 
 vim.g.mapleader = ' '
+vim.api.nvim_set_keymap('', '<Space>', '<Nop>', { noremap = true, silent = true })
 
 -- Nvim Tree
 
@@ -27,8 +28,9 @@ require("nvim-tree").setup({
         group_empty = true
     },
     filters = {
-        dotfiles = true
-    }
+        dotfiles = false
+    },
+    git = {ignore = false}
 })
 
 -- Keys
@@ -87,3 +89,9 @@ require'nvim-treesitter.configs'.setup {
     enable = true,
   }
 }
+
+-- Mason setup
+require("mason").setup()
+require("mason-lspconfig").setup()
+
+
