@@ -49,9 +49,16 @@ use {
 		    ts_update()
 	    end,
     }
+    use({
+	    "nvim-treesitter/nvim-treesitter-textobjects",
+	    after = "nvim-treesitter",
+	    requires = "nvim-treesitter/nvim-treesitter",
+    })
 
     -- Color Schemes
     use 'joshdick/onedark.vim'
+    use 'folke/tokyonight.nvim'
+    use 'rainglow/vim'
 
     -- Vim Airline (status bar)
     use 'vim-airline/vim-airline'
@@ -76,6 +83,10 @@ use {
     -- Mason (packages manager)
     use { "williamboman/mason.nvim" }
        use { "williamboman/mason-lspconfig.nvim"}
-    use {"neovim/nvim-lspconfig"}
+    --use {"neovim/nvim-lspconfig"}
 
+    -- Terminal integration
+    use {"akinsho/toggleterm.nvim", tag = '*', config = function()
+	    require("toggleterm").setup({ })
+    end}
 end)
