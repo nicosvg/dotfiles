@@ -43,8 +43,9 @@ key_mapper('n', '<leader>rc', '<cmd> source $MYVIMRC <CR>')
 key_mapper('n', '<leader>ps', '<cmd> PackerSync <CR>')
 -- Telescope
 local builtin = require('telescope.builtin')
+local egrepify = require 'telescope'.extensions.egrepify
 key_mapper('n', '<leader>ff', builtin.find_files)
-key_mapper('n', '<leader>fa', builtin.live_grep)
+key_mapper('n', '<leader>fa', egrepify.egrepify)
 key_mapper('n', '<leader>fb', builtin.buffers)
 key_mapper('n', '<leader>fh', builtin.help_tags)
 key_mapper('n', '<leader>gr', builtin.lsp_references)
@@ -61,6 +62,13 @@ require "telescope".setup {
 		find_files = {
 			hidden = true
 		} 
+	},
+	mappings = {
+		i = {
+			["<C-Down>"] = "cycle_history_next",
+			["<C-Up>"] = "cycle_history_prev",
+			        ["<C-h>"] = "which_key"
+		}
 	}
 }
 
@@ -168,5 +176,8 @@ require'nvim-treesitter.configs'.setup {
 -- Mason setup
 require("mason").setup()
 require("mason-lspconfig").setup()
+
+-- Smooth scroll setup
+require('neoscroll').setup()
 
 

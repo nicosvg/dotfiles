@@ -29,6 +29,10 @@ use {
         'nvim-telescope/telescope.nvim',
         requires = {'nvim-lua/plenary.nvim'}
     }
+    use {
+	    'fdschmidt93/telescope-egrepify.nvim',
+	    requires = {'nvim-lua/telescope.nvim', 'nvim-lua/plenary.nvim'}
+    }
 
     -- Better escape
     use {
@@ -89,4 +93,7 @@ use {
     use {"akinsho/toggleterm.nvim", tag = '*', config = function()
 	    require("toggleterm").setup({ })
     end}
+
+    -- Smooth scroll
+    use 'karb94/neoscroll.nvim'
 end)
