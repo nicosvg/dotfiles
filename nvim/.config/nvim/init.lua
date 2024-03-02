@@ -24,7 +24,7 @@ require("nvim-tree").setup({
 	filters = {
 		dotfiles = false
 	},
-	git = {ignore = false}
+	git = { ignore = false }
 })
 
 -- Keys
@@ -61,13 +61,13 @@ require "telescope".setup {
 		},
 		find_files = {
 			hidden = true
-		} 
+		}
 	},
 	mappings = {
 		i = {
 			["<C-Down>"] = "cycle_history_next",
 			["<C-Up>"] = "cycle_history_prev",
-			        ["<C-h>"] = "which_key"
+			["<C-h>"] = "which_key"
 		}
 	}
 }
@@ -77,25 +77,37 @@ key_mapper('n', 'gd', '<CMD>lua vim.lsp.buf.definition()<CR>')
 
 -- Better escape
 require("better_escape").setup {
-	mapping = {"jk", "jj"}, -- a table with mappings to use
+	mapping = { "jk", "jj" }, -- a table with mappings to use
 	timeout = vim.o.timeoutlen, -- the time in which the keys must be hit in ms. Use option timeoutlen by default
 	clear_empty_lines = false, -- clear line after escaping if there is only whitespace
-	keys = "<Esc>", -- keys used for escaping, if it is a function will use the result everytime
+	keys = "<Esc>",      -- keys used for escaping, if it is a function will use the result everytime
 }
 
 -- Leap
 require('leap').add_default_mappings()
 
+-- LSP zero
+local lsp_zero = require('lsp-zero')
+lsp_zero.on_attach(function(client, bufnr)
+	-- see :help lsp-zero-keybindings
+	-- to learn the available actions
+	lsp_zero.default_keymaps({ buffer = bufnr })
+end)
+
+
+
+-- here you can setup the language servers
+
 -- LSP
-require'lspconfig'.tsserver.setup {
-	on_attach = on_attach,
-	filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
-	cmd = { "typescript-language-server", "--stdio" }
-}
+--require'lspconfig'.tsserver.setup {
+--	on_attach = on_attach,
+--	filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
+--	cmd = { "typescript-language-server", "--stdio" }
+--}
 
 require('nvim-ts-autotag').setup()
 
-require'nvim-treesitter.configs'.setup {
+require 'nvim-treesitter.configs'.setup {
 	ensure_installed = { "c", "lua", "vim", "vimdoc", "query" },
 	autotag = {
 		enable = true,
@@ -175,9 +187,40 @@ require'nvim-treesitter.configs'.setup {
 
 -- Mason setup
 require("mason").setup()
-require("mason-lspconfig").setup()
+require("mason-lspconfig").setup({
+	ensure_installed = { 'tsserver', 'rust_analyzer' },
+	handlers = {
+		lsp_zero.default_setup,
+	},
+	lazy = false,
+	opts = {
+		auto_install = true
+	}
+})
+
+
+-- Autocomplete
+local cmp = require('cmp')
+local cmp_action = require('lsp-zero').cmp_action()
+
+cmp.setup({
+	mapping = cmp.mapping.preset.insert({
+		-- `Enter` key to confirm completion
+		['<CR>'] = cmp.mapping.confirm({ select = false }),
+
+		-- Ctrl+Space to trigger completion menu
+		['<C-Space>'] = cmp.mapping.complete(),
+
+		-- Navigate between snippet placeholder
+		['<C-f>'] = cmp_action.luasnip_jump_forward(),
+		['<C-b>'] = cmp_action.luasnip_jump_backward(),
+
+		-- Scroll up and down in the completion documentation
+		['<C-u>'] = cmp.mapping.scroll_docs(-4),
+		['<C-d>'] = cmp.mapping.scroll_docs(4),
+	})
+})
 
 -- Smooth scroll setup
 require('neoscroll').setup()
-
-
+vim.o.scrolloff = 8
