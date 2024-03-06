@@ -11,6 +11,7 @@ vim.g.loaded_netrwPlugin = 1
 
 -- set color scheme
 vim.cmd('colorscheme tokyonight')
+vim.cmd.colorscheme "catppuccin"
 
 -- setup with some options
 require("nvim-tree").setup({
@@ -45,6 +46,7 @@ key_mapper('n', '<leader>ps', '<cmd> PackerSync <CR>')
 local builtin = require('telescope.builtin')
 local egrepify = require 'telescope'.extensions.egrepify
 key_mapper('n', '<leader>ff', builtin.find_files)
+key_mapper('n', '<D-p>', builtin.find_files)
 key_mapper('n', '<leader>fa', egrepify.egrepify)
 key_mapper('n', '<leader>fb', builtin.buffers)
 key_mapper('n', '<leader>fh', builtin.help_tags)
@@ -224,3 +226,12 @@ cmp.setup({
 -- Smooth scroll setup
 require('neoscroll').setup()
 vim.o.scrolloff = 8
+
+-- Status line
+require('lualine').setup {
+	options = {
+		theme = "catppuccin",
+		component_separators = '',
+		section_separators = { left = '', right = '' },
+	}
+}
