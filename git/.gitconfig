@@ -1,6 +1,8 @@
+[diff "sopsdiffer"]
+	textconv = sops -d
 [user]
-name = Nicolas Sauvage
-email = nicolas.sauvage@talan.com
+	name = Nicolas Sauvage
+	email = nicolas.sauvage@renaissance.com
 [alias]
 co = checkout
 br = branch
@@ -8,35 +10,92 @@ ci = commit
 st = status
 cim = commit -m
 aa = add .
-svnr = svn rebase
-svnd = svn dcommit -e
 mff = merge --ff-only
 p = pull
+s = switch
+sw = switch
 cwip = commit -am "WIP" --no-verify
 rc = rebase --continue
-amend = commit -a --amend --no-edit
+amend = commit --amend --no-edit
+amend-all = commit -a --amend --no-edit
 clean-branches = "!git branch --merged | xargs git br -d"
 branch-name = "!git rev-parse --abbrev-ref HEAD"
 publish = "!git push -u origin $(git branch-name)"
 # https://robots.thoughtbot.com/git-push-force-with-lease
 pf = push --force-with-lease
-[rerere]
-enabled = true
-[https]
-[http]
-[push]
-default = simple
+pr = pretty-pull-request
+fixup = "!git log -n 50 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup"
+ri = "!git log -n 50 --pretty=format:'%h %s %d' --no-merges | fzf | cut -c -7 | xargs -o git rebase -i"
+ria = "!git rebase -i `git merge-base origin/main HEAD` --autosquash"
+ls=log --oneline
+bra = "!git checkout  \"$(git branch --sort=-committerdate | fzf | xargs)\""
+
 [rebase]
-autosquash = true
-[core]
-	autocrlf = input
-	editor = nvim
-[credential]
-	helper = cache --timeout=36000
-#	helper = cache --timeout=0
+	autosquash = true
+[rerere]
+	enabled = true
 [init]
 	defaultBranch = main
 [pull]
 	ff = only
 [help]
 	autocorrect = 1
+[pretty-pull-request]
+	pull-bases = staging main
+[core]
+	editor = nvim
+        pager = delta
+	
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[push]
+	autoSetupRemote = true
+
+
+[interactive]
+    diffFilter = delta --color-only --features=interactive
+
+[delta]
+    features = catppuccin-mocha
+    side-by-side = false
+    true-color = always
+    colorMoved = default
+    map-styles = bold purple => syntax magenta, bold cyan => syntax blue
+    navigate = true
+	light=false
+
+[delta "interactive"]
+    keep-plus-minus-markers = false
+
+[delta "catppuccin-mocha"]
+	blame-palette = "#1e1e2e #181825 #11111b #313244 #45475a"
+	commit-decoration-style = "box ul"
+	dark = true
+	file-decoration-style = "#cdd6f4"
+	file-style = "#cdd6f4"
+	hunk-header-decoration-style = "box ul"
+	hunk-header-file-style = "bold"
+	hunk-header-line-number-style = "bold #a6adc8"
+	hunk-header-style = "file line-number syntax"
+	line-numbers = true
+	line-numbers-left-style = "#6c7086"
+	line-numbers-minus-style = "bold #f38ba8"
+	line-numbers-plus-style = "bold #a6e3a1"
+	line-numbers-right-style = "#6c7086"
+	line-numbers-zero-style = "#6c7086"
+	# 25% red 75% base
+	minus-emph-style = "bold syntax #53394c"
+	# 10% red 90% base
+	minus-style = "syntax #35293b"
+	# 25% green 75% base
+	plus-emph-style = "bold syntax #40504b"
+	# 10% green 90% base
+	plus-style = "syntax #2c333a"
+	# Should match the name of the bat theme
+	syntax-theme = "Catppuccin-mocha"
+
+[diff]
+	colormoved = default
