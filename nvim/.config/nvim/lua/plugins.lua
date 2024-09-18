@@ -34,13 +34,6 @@ return require('packer').startup(function(use)
 		requires = { 'nvim-lua/telescope.nvim', 'nvim-lua/plenary.nvim' }
 	}
 
-	-- Better escape
-	use {
-		"max397574/better-escape.nvim",
-		config = function()
-			require("better_escape").setup()
-		end
-	}
 
 	-- LSP zero
 	use {
@@ -112,17 +105,9 @@ return require('packer').startup(function(use)
 	use { "williamboman/mason-lspconfig.nvim" }
 	--use {"neovim/nvim-lspconfig"}
 
-	-- Terminal integration
-	-- use { "akinsho/toggleterm.nvim", tag = '*', config = function()
-	-- 	require("toggleterm").setup({})
-	-- end }
-
 	-- Smooth scroll
 	use 'karb94/neoscroll.nvim'
 
-	-- Fancy start screen
-	use 'mhinz/vim-startify'
-
-	-- Autosession
-	use 'rmagatti/auto-session'
+	-- mini.nvim
+	use 'echasnovski/mini.nvim'
 end)

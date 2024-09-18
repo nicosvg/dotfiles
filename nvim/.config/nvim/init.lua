@@ -52,8 +52,10 @@ key_mapper('n', '<leader>fb', builtin.buffers)
 key_mapper('n', '<leader>fh', builtin.help_tags)
 key_mapper('n', '<leader>gr', builtin.lsp_references)
 key_mapper('n', '<leader>fs', builtin.lsp_dynamic_workspace_symbols)
+key_mapper('n', 'gr', builtin.lsp_references)
 -- Terminal
 key_mapper('n', '<c-h>', '<cmd> ToggleTerm <CR>')
+key_mapper('n', '<leader>j', '<cmd> ToggleTerm <CR>')
 
 --Telescope
 require "telescope".setup {
@@ -75,15 +77,51 @@ require "telescope".setup {
 }
 
 -- LSP keymaps
-key_mapper('n', 'gd', '<CMD>lua vim.lsp.buf.definition()<CR>')
+
+  -- LSP keymaps
+  local function filter(arr, fn)
+  if type(arr) ~= "table" then
+    return arr
+  end
+
+  local filtered = {}
+  for k, v in pairs(arr) do
+    if fn(v, k, arr) then
+      table.insert(filtered, v)
+    end
+  end
+
+  return filtered
+end
+
+local function filterReactDTS(value)
+  return string.match(value.filename, "index.d.ts") == nil
+end
+
+local function on_list(options)
+  local items = options.items
+  if #items > 1 then
+    items = filter(items, filterReactDTS)
+  end
+
+  vim.fn.setqflist({}, " ", { title = options.title, items = items, context = options.context })
+  vim.api.nvim_command("cfirst") -- or maybe you want 'copen' instead of 'cfirst'
+end
+
+-- On LSP 
+
+  vim.keymap.set("n", "gd", function()
+    vim.lsp.buf.definition({ on_list = on_list })
+  end, bufopts)
+-- key_mapper('n', 'gd', '<CMD>lua vim.lsp.buf.definition()<CR>')
 
 -- Better escape
-require("better_escape").setup {
-	mapping = { "jk", "jj" }, -- a table with mappings to use
-	timeout = vim.o.timeoutlen, -- the time in which the keys must be hit in ms. Use option timeoutlen by default
-	clear_empty_lines = false, -- clear line after escaping if there is only whitespace
-	keys = "<Esc>",      -- keys used for escaping, if it is a function will use the result everytime
-}
+-- require("better_escape").setup {
+-- 	mapping = { "jk", "jj" }, -- a table with mappings to use
+-- 	timeout = vim.o.timeoutlen, -- the time in which the keys must be hit in ms. Use option timeoutlen by default
+-- 	clear_empty_lines = false, -- clear line after escaping if there is only whitespace
+-- 	keys = "<Esc>",      -- keys used for escaping, if it is a function will use the result everytime
+-- }
 
 -- Leap
 require('leap').add_default_mappings()
@@ -109,88 +147,10 @@ end)
 
 require('nvim-ts-autotag').setup()
 
-require 'nvim-treesitter.configs'.setup {
-	ensure_installed = { "c", "lua", "vim", "vimdoc", "query" },
-	autotag = {
-		enable = true,
-	},
-	--Text Objects
-	textobjects = {
-		select = {
-			enable = true,
-
-			-- Automatically jump forward to textobj, similar to targets.vim
-			lookahead = true,
-
-			keymaps = {
-				-- You can use the capture groups defined in textobjects.scm
-				["af"] = "@function.outer",
-				["if"] = "@function.inner",
-				["ac"] = "@class.outer",
-				-- You can optionally set descriptions to the mappings (used in the desc parameter of
-				-- nvim_buf_set_keymap) which plugins like which-key display
-				["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-				-- You can also use captures from other query groups like `locals.scm`
-				["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
-			},
-			-- You can choose the select mode (default is charwise 'v')
-			--
-			-- Can also be a function which gets passed a table with the keys
-			-- * query_string: eg '@function.inner'
-			-- * method: eg 'v' or 'o'
-			-- and should return the mode ('v', 'V', or '<c-v>') or a table
-			-- mapping query_strings to modes.
-			selection_modes = {
-				--		['@parameter.outer'] = 'v', -- charwise
-				--		['@function.outer'] = 'V', -- linewise
-				--	['@class.outer'] = '<c-v>', -- blockwise
-			},
-			-- If you set this to `true` (default is `false`) then any textobject is
-			-- extended to include preceding or succeeding whitespace. Succeeding
-			-- whitespace has priority in order to act similarly to eg the built-in
-			-- `ap`.
-			--
-			-- Can also be a function which gets passed a table with the keys
-			-- * query_string: eg '@function.inner'
-			-- * selection_mode: eg 'v'
-			-- and should return true of false
-			include_surrounding_whitespace = true,
-		},
-		move = {
-			enable = true,
-			set_jumps = true, -- whether to set jumps in the jumplist
-			goto_next_start = {
-				["]m"] = "@function.outer",
-			},
-			goto_next_end = {
-				["]M"] = "@function.outer",
-			},
-			goto_previous_start = {
-				["[m"] = "@function.outer",
-			},
-			goto_previous_end = {
-				["[M"] = "@function.outer",
-			},
-			-- Below will go to either the start or the end, whichever is closer.
-			-- Use if you want more granular movements
-			-- Make it even more gradual by adding multiple queries and regex.
-			goto_next = {
-				["]d"] = "@conditional.outer",
-			},
-			goto_previous = {
-				["[d"] = "@conditional.outer",
-			}
-		},
-
-	},
-}
-
-
-
 -- Mason setup
 require("mason").setup()
 require("mason-lspconfig").setup({
-	ensure_installed = { 'tsserver', 'rust_analyzer' },
+	ensure_installed = { 'ts_ls', 'rust_analyzer' },
 	handlers = {
 		lsp_zero.default_setup,
 	},
@@ -235,3 +195,38 @@ require('lualine').setup {
 		section_separators = { left = '', right = '' },
 	}
 }
+
+-- mini.nvim
+local starter = require('mini.starter')
+starter.setup({
+  -- evaluate_single = true,
+  items = {
+    starter.sections.sessions(77, true),
+    starter.sections.builtin_actions(),
+  },
+  content_hooks = {
+    function(content)
+      local blank_content_line = { { type = 'empty', string = '' } }
+      local section_coords = starter.content_coords(content, 'section')
+      -- Insert backwards to not affect coordinates
+      for i = #section_coords, 1, -1 do
+        table.insert(content, section_coords[i].line + 1, blank_content_line)
+      end
+      return content
+    end,
+    starter.gen_hook.adding_bullet("» "),
+    starter.gen_hook.aligning('center', 'center'),
+  },
+  header = 'Hello Nico!',
+  footer = '',
+})
+require('mini.sessions').setup({
+  -- Whether to read latest session if Neovim opened without file arguments
+  autoread = false,
+  -- Whether to write current session before quitting Neovim
+  autowrite = true,
+  -- Directory where global sessions are stored (use `''` to disable)
+  directory =  '~/.vim/sessions', --<"session" subdir of user data directory from |stdpath()|>,
+  -- File for local session (use `''` to disable)
+  file = '' -- 'Session.vim',
+})
