@@ -95,7 +95,7 @@ bra = "!git checkout  \"$(git branch --sort=-committerdate | fzf | xargs)\""
 	# 10% green 90% base
 	plus-style = "syntax #2c333a"
 	# Should match the name of the bat theme
-	syntax-theme = "Catppuccin-mocha"
+	syntax-theme = "Catppuccin Mocha"
 
 [diff]
 	colormoved = default
