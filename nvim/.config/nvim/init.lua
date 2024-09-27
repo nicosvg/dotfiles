@@ -52,6 +52,7 @@ key_mapper('n', '<leader>fb', builtin.buffers)
 key_mapper('n', '<leader>fh', builtin.help_tags)
 key_mapper('n', '<leader>gr', builtin.lsp_references)
 key_mapper('n', '<leader>fs', builtin.lsp_dynamic_workspace_symbols)
+key_mapper('n', '<leader>fr', builtin.registers)
 key_mapper('n', 'gr', builtin.lsp_references)
 -- Terminal
 key_mapper('n', '<c-h>', '<cmd> ToggleTerm <CR>')
@@ -111,9 +112,10 @@ end
 -- On LSP 
 
   vim.keymap.set("n", "gd", function()
-    vim.lsp.buf.definition({ on_list = on_list })
+   builtin.lsp_definitions({ on_list = on_list })
   end, bufopts)
 -- key_mapper('n', 'gd', '<CMD>lua vim.lsp.buf.definition()<CR>')
+key_mapper('n', '<leader> ca', '<CMD>lua vim.lsp.buf.code_action()<CR>')
 
 -- Better escape
 -- require("better_escape").setup {
