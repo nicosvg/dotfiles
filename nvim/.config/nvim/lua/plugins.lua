@@ -13,7 +13,7 @@ return {
 		end
 	},
 
-	 -- Vim surround
+	-- Vim surround
 	'tpope/vim-surround',
 
 	-- Telescope
@@ -24,7 +24,7 @@ return {
 
 
 	-- LSP zero
-	 {
+	{
 		'VonHeikemen/lsp-zero.nvim',
 		branch = 'v3.x',
 		dependencies = {
@@ -54,10 +54,10 @@ return {
 	'joshdick/onedark.vim',
 	'folke/tokyonight.nvim',
 	'rainglow/vim',
-	{ "catppuccin/nvim", as = "catppuccin" },
+	{ "catppuccin/nvim",                  as = "catppuccin" },
 
 	-- Status bar
-        	{
+	{
 		'nvim-lualine/lualine.nvim',
 		dependencies = { 'nvim-tree/nvim-web-devicons', opt = true }
 	},
@@ -71,10 +71,18 @@ return {
 	-- Autosave
 	{
 		"Pocco81/auto-save.nvim",
+		enabled = false,
 		config = function()
 			require("auto-save").setup {
-				-- your config goes here
-				-- or just leave it empty :)
+				trigger_events = { "InsertLeave" },
+				debounce_delay = 500,
+				execution_message = {
+					message = function() -- message to print on save
+						return ("AutoSave: saved at " .. vim.fn.strftime("%H:%M:%S"))
+					end,
+					dim = 0.18, -- dim the color of `message`
+					cleaning_interval = 1250, -- (milliseconds) automatically clean MsgArea after displaying `message`. See :h MsgArea
+				},
 			}
 		end,
 	},
@@ -82,7 +90,6 @@ return {
 	-- Mason (packages manager)
 	{ "williamboman/mason.nvim" },
 	{ "williamboman/mason-lspconfig.nvim" },
-	--use {"neovim/nvim-lspconfig"}
 
 	-- Smooth scroll
 	'karb94/neoscroll.nvim',

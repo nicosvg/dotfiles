@@ -32,7 +32,7 @@ require("nvim-tree").setup({
 local key_mapper = function(mode, key, result)
 	vim.keymap.set(mode, key, result, {
 		noremap = true,
-		silent = true
+		silent = true,
 	})
 end
 -- NvimTree
@@ -46,15 +46,18 @@ local egrepify = require 'telescope'.extensions.egrepify
 key_mapper('n', '<leader>ff', builtin.find_files)
 key_mapper('n', '<D-p>', builtin.find_files)
 key_mapper('n', '<leader>fa', egrepify.egrepify)
-key_mapper('n', '<leader>fb', builtin.buffers)
+key_mapper('n', '<leader>b', builtin.buffers)
+--  { sort_mru=true, ignore_current_buffer=true }
 key_mapper('n', '<leader>fh', builtin.help_tags)
 key_mapper('n', '<leader>gr', builtin.lsp_references)
 key_mapper('n', '<leader>fs', builtin.lsp_dynamic_workspace_symbols)
 key_mapper('n', '<leader>fr', builtin.registers)
 key_mapper('n', 'gr', builtin.lsp_references)
--- Terminal
-key_mapper('n', '<c-h>', '<cmd> ToggleTerm <CR>')
-key_mapper('n', '<leader>j', '<cmd> ToggleTerm <CR>')
+-- Buffers
+key_mapper('n', '<leader>l', "<CMD>bnext<CR>")
+key_mapper('n', '<leader>h', "<CMD>bprev<CR>")
+key_mapper('n', '<leader>i', vim.lsp.buf.format)
+key_mapper('n', '<leader>w', "<CMD>w<CR>")
 
 --Telescope
 require "telescope".setup {
@@ -76,41 +79,39 @@ require "telescope".setup {
 }
 
 -- LSP keymaps
+local function filter(arr, fn)
+	if type(arr) ~= "table" then
+		return arr
+	end
 
-  -- LSP keymaps
-  local function filter(arr, fn)
-  if type(arr) ~= "table" then
-    return arr
-  end
+	local filtered = {}
+	for k, v in pairs(arr) do
+		if fn(v, k, arr) then
+			table.insert(filtered, v)
+		end
+	end
 
-  local filtered = {}
-  for k, v in pairs(arr) do
-    if fn(v, k, arr) then
-      table.insert(filtered, v)
-    end
-  end
-
-  return filtered
+	return filtered
 end
 
 local function filterReactDTS(value)
-  return string.match(value.filename, "index.d.ts") == nil
+	return string.match(value.filename, "index.d.ts") == nil
 end
 
 local function on_list(options)
-  local items = options.items
-  if #items > 1 then
-    items = filter(items, filterReactDTS)
-  end
+	local items = options.items
+	if #items > 1 then
+		items = filter(items, filterReactDTS)
+	end
 
-  vim.fn.setqflist({}, " ", { title = options.title, items = items, context = options.context })
-  vim.api.nvim_command("cfirst") -- or maybe you want 'copen' instead of 'cfirst'
+	vim.fn.setqflist({}, " ", { title = options.title, items = items, context = options.context })
+	vim.api.nvim_command("cfirst") -- or maybe you want 'copen' instead of 'cfirst'
 end
 
--- On LSP 
-  vim.keymap.set("n", "gd", function()
-   builtin.lsp_definitions({ on_list = on_list })
-  end, bufopts)
+-- On LSP
+vim.keymap.set("n", "gd", function()
+	builtin.lsp_definitions({ on_list = on_list })
+end, bufopts)
 -- key_mapper('n', 'gd', '<CMD>lua vim.lsp.buf.definition()<CR>')
 key_mapper('n', '<leader> ca', '<CMD>lua vim.lsp.buf.code_action()<CR>')
 
@@ -140,7 +141,7 @@ require('nvim-ts-autotag').setup()
 -- Mason setup
 require("mason").setup()
 require("mason-lspconfig").setup({
-	ensure_installed = { 'ts_ls', 'rust_analyzer', 'lua_ls'},
+	ensure_installed = { 'ts_ls', 'rust_analyzer', 'lua_ls' },
 	handlers = {
 		lsp_zero.default_setup,
 	},
@@ -150,23 +151,23 @@ require("mason-lspconfig").setup({
 	}
 })
 
-require'lspconfig'.lua_ls.setup {
-    settings = {
-        Lua = {
-            diagnostics = {
-                -- Get the language server to recognize the `vim` global
-                globals = {'vim'},
-            },
-            workspace = {
-                -- Make the server aware of Neovim runtime files
-                library = vim.api.nvim_get_runtime_file("", true),
-            },
-            -- Do not send telemetry data containing a randomized but unique identifier
-            telemetry = {
-                enable = false,
-            },
-        },
-    },
+require 'lspconfig'.lua_ls.setup {
+	settings = {
+		Lua = {
+			diagnostics = {
+				-- Get the language server to recognize the `vim` global
+				globals = { 'vim' },
+			},
+			workspace = {
+				-- Make the server aware of Neovim runtime files
+				library = vim.api.nvim_get_runtime_file("", true),
+			},
+			-- Do not send telemetry data containing a randomized but unique identifier
+			telemetry = {
+				enable = false,
+			},
+		},
+	},
 }
 
 -- Autocomplete
@@ -207,34 +208,55 @@ require('lualine').setup {
 -- mini.nvim
 local starter = require('mini.starter')
 starter.setup({
-  -- evaluate_single = true,
-  items = {
-    starter.sections.sessions(77, true),
-    starter.sections.builtin_actions(),
-  },
-  content_hooks = {
-    function(content)
-      local blank_content_line = { { type = 'empty', string = '' } }
-      local section_coords = starter.content_coords(content, 'section')
-      -- Insert backwards to not affect coordinates
-      for i = #section_coords, 1, -1 do
-        table.insert(content, section_coords[i].line + 1, blank_content_line)
-      end
-      return content
-    end,
-    starter.gen_hook.adding_bullet("» "),
-    starter.gen_hook.aligning('center', 'center'),
-  },
-  header = 'Hello Nico!',
-  footer = '',
+	-- evaluate_single = true,
+	items = {
+		starter.sections.sessions(77, true),
+		starter.sections.builtin_actions(),
+	},
+	content_hooks = {
+		function(content)
+			local blank_content_line = { { type = 'empty', string = '' } }
+			local section_coords = starter.content_coords(content, 'section')
+			-- Insert backwards to not affect coordinates
+			for i = #section_coords, 1, -1 do
+				table.insert(content, section_coords[i].line + 1, blank_content_line)
+			end
+			return content
+		end,
+		starter.gen_hook.adding_bullet("» "),
+		starter.gen_hook.aligning('center', 'center'),
+	},
+	header = 'Hello Nico!',
+	footer = '',
 })
+
 require('mini.sessions').setup({
-  -- Whether to read latest session if Neovim opened without file arguments
-  autoread = false,
-  -- Whether to write current session before quitting Neovim
-  autowrite = true,
-  -- Directory where global sessions are stored (use `''` to disable)
-  directory =  '~/.vim/sessions', --<"session" subdir of user data directory from |stdpath()|>,
-  -- File for local session (use `''` to disable)
-  file = '' -- 'Session.vim',
+	-- Whether to read latest session if Neovim opened without file arguments
+	autoread = false,
+	-- Whether to write current session before quitting Neovim
+	autowrite = true,
+	-- Directory where global sessions are stored (use `''` to disable)
+	directory = '~/.vim/sessions', --<"session" subdir of user data directory from |stdpath()|>,
+	-- File for local session (use `''` to disable)
+	file = ''               -- 'Session.vim',
 })
+
+-- Format on save
+-- disabled as it slows saving
+-- vim.api.nvim_create_autocmd("BufWritePre", {
+-- 	callback = function()
+-- 		-- vim.lsp.buf.format { async = false }
+-- 	end
+-- })
+
+-- Harpoon
+local harpoon = require("harpoon")
+harpoon:setup()
+
+vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+
+vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end)
+vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end)
+vim.keymap.set("n", "<leader>3", function() harpoon:list():select(3) end)
+vim.keymap.set("n", "<leader>4", function() harpoon:list():select(4) end)
