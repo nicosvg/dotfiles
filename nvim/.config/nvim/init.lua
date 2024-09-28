@@ -44,7 +44,7 @@ key_mapper('n', '<leader>rc', '<cmd> source $MYVIMRC <CR>')
 local builtin = require('telescope.builtin')
 local egrepify = require 'telescope'.extensions.egrepify
 key_mapper('n', '<leader>ff', builtin.find_files)
-key_mapper('n', '<D-p>', builtin.find_files)
+key_mapper('n', '<M-p>', builtin.find_files)
 key_mapper('n', '<leader>fa', egrepify.egrepify)
 key_mapper('n', '<leader>b', builtin.buffers)
 --  { sort_mru=true, ignore_current_buffer=true }
@@ -55,7 +55,7 @@ key_mapper('n', '<leader>fr', builtin.registers)
 key_mapper('n', 'gr', builtin.lsp_references)
 -- Buffers
 key_mapper('n', '<leader>l', "<CMD>bnext<CR>")
-key_mapper('n', '<leader>h', "<CMD>bprev<CR>")
+key_mapper('n', '<leader>L', "<CMD>bprev<CR>")
 key_mapper('n', '<leader>i', vim.lsp.buf.format)
 key_mapper('n', '<leader>w', "<CMD>w<CR>")
 
@@ -95,7 +95,7 @@ local function filter(arr, fn)
 end
 
 local function filterReactDTS(value)
-	return string.match(value.filename, "index.d.ts") == nil
+	return string.match(value.filename, "index.d.ts") == nil and string.match(value.filename, "types.d.ts") == nil
 end
 
 local function on_list(options)
@@ -111,21 +111,20 @@ end
 -- On LSP
 vim.keymap.set("n", "gd", function()
 	builtin.lsp_definitions({ on_list = on_list })
-end, bufopts)
--- key_mapper('n', 'gd', '<CMD>lua vim.lsp.buf.definition()<CR>')
-key_mapper('n', '<leader> ca', '<CMD>lua vim.lsp.buf.code_action()<CR>')
+end)
+-- key_mapper('n', 'gD', '<CMD>lua vim.lsp.buf.definition()<CR>')
+key_mapper('n', '<leader>ca', vim.lsp.buf.code_action)
 
 -- Leap
 require('leap').add_default_mappings()
 
 -- LSP zero
 local lsp_zero = require('lsp-zero')
-lsp_zero.on_attach(function(client, bufnr)
+lsp_zero.on_attach(function(_, bufnr)
 	-- see :help lsp-zero-keybindings
 	-- to learn the available actions
 	lsp_zero.default_keymaps({ buffer = bufnr })
 end)
-
 
 -- here you can setup the language servers
 
@@ -253,10 +252,17 @@ require('mini.sessions').setup({
 local harpoon = require("harpoon")
 harpoon:setup()
 
-vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
-vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+vim.keymap.set("n", "<leader>ha", function() harpoon:list():add() end)
+vim.keymap.set("n", "<leader>hd", function() harpoon:list():remove() end)
+vim.keymap.set("n", "<leader>hh", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 
 vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end)
 vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end)
 vim.keymap.set("n", "<leader>3", function() harpoon:list():select(3) end)
 vim.keymap.set("n", "<leader>4", function() harpoon:list():select(4) end)
+
+-- Copilot
+vim.g.copilot_node_command = "/Users/nico/.local/state/fnm_multishells/88954_1727452566831/bin/node"
+
+
+
