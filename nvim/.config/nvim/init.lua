@@ -1,19 +1,19 @@
-require('plugins')
+require("config.lazy")
 
 vim.g.mapleader = ' '
 vim.api.nvim_set_keymap('', '<Space>', '<Nop>', { noremap = true, silent = true })
+
 
 -- Nvim Tree
 
 -- disable netrw at the very start of your init.lua (strongly advised)
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
-
+--
 -- set color scheme
-vim.cmd('colorscheme tokyonight')
+-- vim.cmd('colorscheme tokyonight')
 vim.cmd.colorscheme "catppuccin"
 
--- setup with some options
 require("nvim-tree").setup({
 	sort_by = "case_sensitive",
 	view = {
@@ -40,8 +40,6 @@ key_mapper('n', '<c-n>', '<cmd> NvimTreeToggle <CR>')
 key_mapper('n', '<leader>e', '<cmd> NvimTreeFocus <CR>')
 -- Reload config
 key_mapper('n', '<leader>rc', '<cmd> source $MYVIMRC <CR>')
--- Packer
-key_mapper('n', '<leader>ps', '<cmd> PackerSync <CR>')
 -- Telescope
 local builtin = require('telescope.builtin')
 local egrepify = require 'telescope'.extensions.egrepify
@@ -110,20 +108,11 @@ local function on_list(options)
 end
 
 -- On LSP 
-
   vim.keymap.set("n", "gd", function()
    builtin.lsp_definitions({ on_list = on_list })
   end, bufopts)
 -- key_mapper('n', 'gd', '<CMD>lua vim.lsp.buf.definition()<CR>')
 key_mapper('n', '<leader> ca', '<CMD>lua vim.lsp.buf.code_action()<CR>')
-
--- Better escape
--- require("better_escape").setup {
--- 	mapping = { "jk", "jj" }, -- a table with mappings to use
--- 	timeout = vim.o.timeoutlen, -- the time in which the keys must be hit in ms. Use option timeoutlen by default
--- 	clear_empty_lines = false, -- clear line after escaping if there is only whitespace
--- 	keys = "<Esc>",      -- keys used for escaping, if it is a function will use the result everytime
--- }
 
 -- Leap
 require('leap').add_default_mappings()
@@ -135,7 +124,6 @@ lsp_zero.on_attach(function(client, bufnr)
 	-- to learn the available actions
 	lsp_zero.default_keymaps({ buffer = bufnr })
 end)
-
 
 
 -- here you can setup the language servers
@@ -152,7 +140,7 @@ require('nvim-ts-autotag').setup()
 -- Mason setup
 require("mason").setup()
 require("mason-lspconfig").setup({
-	ensure_installed = { 'ts_ls', 'rust_analyzer' },
+	ensure_installed = { 'ts_ls', 'rust_analyzer', 'lua_ls'},
 	handlers = {
 		lsp_zero.default_setup,
 	},
@@ -162,6 +150,24 @@ require("mason-lspconfig").setup({
 	}
 })
 
+require'lspconfig'.lua_ls.setup {
+    settings = {
+        Lua = {
+            diagnostics = {
+                -- Get the language server to recognize the `vim` global
+                globals = {'vim'},
+            },
+            workspace = {
+                -- Make the server aware of Neovim runtime files
+                library = vim.api.nvim_get_runtime_file("", true),
+            },
+            -- Do not send telemetry data containing a randomized but unique identifier
+            telemetry = {
+                enable = false,
+            },
+        },
+    },
+}
 
 -- Autocomplete
 local cmp = require('cmp')
