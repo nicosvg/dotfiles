@@ -54,7 +54,7 @@ return {
 	'joshdick/onedark.vim',
 	'folke/tokyonight.nvim',
 	'rainglow/vim',
-	{ "catppuccin/nvim",                  as = "catppuccin" },
+	{ "catppuccin/nvim", as = "catppuccin" },
 
 	-- Status bar
 	{

@@ -25,7 +25,12 @@ require("nvim-tree").setup({
 	filters = {
 		dotfiles = false
 	},
-	git = { ignore = false }
+	git = { ignore = false },
+	update_focused_file = {
+		enable = true,
+		update_root = false,
+		ignore_list = {},
+	},
 })
 
 -- Keys
@@ -60,7 +65,8 @@ key_mapper('n', '<leader>i', vim.lsp.buf.format)
 key_mapper('n', '<leader>w', "<CMD>w<CR>")
 
 --Telescope
-require "telescope".setup {
+local actions = require('telescope.actions')
+require('telescope').setup {
 	pickers = {
 		colorscheme = {
 			enable_preview = true
@@ -69,11 +75,19 @@ require "telescope".setup {
 			hidden = true
 		}
 	},
+	defaults = {
+		mappings = {
+			i = {
+				["<esc>"] = actions.close,
+				["<C-e>"] = { "<esc>", type = "command" },
+			}
+		}
+	},
 	mappings = {
 		i = {
 			["<C-Down>"] = "cycle_history_next",
 			["<C-Up>"] = "cycle_history_prev",
-			["<C-h>"] = "which_key"
+			["<C-h>"] = "which_key",
 		}
 	}
 }
@@ -263,6 +277,3 @@ vim.keymap.set("n", "<leader>4", function() harpoon:list():select(4) end)
 
 -- Copilot
 vim.g.copilot_node_command = "/Users/nico/.local/state/fnm_multishells/88954_1727452566831/bin/node"
-
-
-
