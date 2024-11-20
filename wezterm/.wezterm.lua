@@ -28,5 +28,8 @@ config.hide_tab_bar_if_only_one_tab = true
 
 config.audible_bell = "Disabled"
 
+-- shell executable
+config.default_prog = { "/opt/homebrew/bin/fish" }
+
 -- and finally, return the configuration to wezterm
 return config
