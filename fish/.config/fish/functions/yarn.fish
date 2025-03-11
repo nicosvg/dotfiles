@@ -20,6 +20,6 @@ function yarn
                 return
         end
     else
-        command npm $argv
+        command yarn $argv
     end
 end
