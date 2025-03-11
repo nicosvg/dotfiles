@@ -3,3 +3,8 @@
 -- Add any additional options here
 
 vim.g.root_spec = { { ".git", "lua" }, "lsp", "cwd" }
+
+-- No auto commenting new lines
+vim.api.nvim_create_autocmd("FileType", {
+  command = "set formatoptions-=cro",
+})
