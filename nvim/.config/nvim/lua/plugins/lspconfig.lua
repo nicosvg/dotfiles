@@ -39,6 +39,13 @@ return {
   "neovim/nvim-lspconfig",
   opts = {
     inlay_hints = { enabled = false },
+    servers = {
+      eslint = {
+        keys = {
+          { "<leader>ce", "<cmd>EslintFixAll<CR>", desc = "Fix all ESlint errors" },
+        },
+      },
+    },
   },
   -- opts = function()
   --   local keys = require("lazyvim.plugins.lsp.keymaps").get()
