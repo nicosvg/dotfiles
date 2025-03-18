@@ -15,12 +15,14 @@ config.font = wezterm.font_with_fallback({
 })
 
 config.font_size = 17
+config.underline_thickness = 3
+config.underline_position = -4
 
 -- Window config
 config.window_padding = {
-	left = 0,
+	left = 4,
 	right = 0,
-	top = 0,
+	top = 2,
 	bottom = 0,
 }
 
