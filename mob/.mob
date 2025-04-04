@@ -1,0 +1,2 @@
+MOB_DONE_SQUASH=squash-wip
+MOB_OPEN_COMMAND="n %s"
