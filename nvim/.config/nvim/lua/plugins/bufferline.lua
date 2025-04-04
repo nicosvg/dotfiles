@@ -2,6 +2,10 @@ return {
   "akinsho/bufferline.nvim",
   optional = true,
   opts = {
-    -- separator_style = "slant",
+    options = {
+      indicator = {
+        style = "icon",
+      },
+    },
   },
 }
