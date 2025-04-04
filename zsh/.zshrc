@@ -171,3 +171,5 @@ export PATH="$HOME/.local/share/nvim/mason/bin/:$PATH"
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
 source "$HOME/.rye/env"
 eval "$(fnm env --use-on-cd --shell zsh --version-file-strategy=recursive)"
+
+. "$HOME/.local/bin/env"
